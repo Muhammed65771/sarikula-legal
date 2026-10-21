@@ -1,11 +1,238 @@
 <!doctype html>
-<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SarıKula</title>
-<style>body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f7f7f5;color:#171717}
-@media (prefers-color-scheme: dark){body{background:#0f0f0e;color:#f5f5f2}}
-main{max-width:640px;margin:0 auto;padding:48px 16px}h1{font-size:34px;margin:0 0 8px}a{color:inherit}
-.tag{display:inline-block;background:#ffdf32;color:#171717;border-radius:999px;padding:2px 12px;font-weight:600;font-size:14px}</style></head>
-<body><main><span class="tag">Yakında App Store'da</span><h1>SarıKula</h1>
-<p>Güvenilir ustaları bulmanın kolay yolu. Ücretsiz ilan ver, teklifleri karşılaştır, güvenle randevu al.</p>
-<p><a href="gizlilik.html">Gizlilik Politikası</a> · <a href="kosullar.html">Kullanım Koşulları</a> · <a href="destek.html">Destek</a> · <a href="mailto:kndgr65@gmail.com">İletişim</a></p>
-</main></body></html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SarıKula · Güvenilir ustalar, tek uygulamada</title>
+<meta name="description" content="SarıKula ile ihtiyacını anlat, ustalardan teklif al, mesajlaş ve güvenle randevu oluştur. Müşteriler için ücretsiz, komisyon yok.">
+<meta property="og:title" content="SarıKula · Güvenilir ustalar, tek uygulamada">
+<meta property="og:description" content="Ücretsiz ilan ver, teklifleri karşılaştır, yakınındaki ustaları haritada gör.">
+<meta property="og:image" content="img/MascotHello.png">
+<link rel="icon" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<style>
+  :root {
+    --brand: #ffdf32; --brand-deep: #8a6a00; --ink: #171717; --muted: #5e5e5e;
+    --bg: #fbfaf6; --card: #ffffff; --line: #ece9df; --soft: #fff7cc;
+    --radius: 22px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #f5f5f2; --muted: #b3b2ac; --bg: #0f0f0e; --card: #1b1b19; --line: #2b2a27; --soft: #2a2610; --brand-deep: #ffdf32; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 17px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* nav */
+  nav { position: sticky; top: 0; z-index: 10; backdrop-filter: saturate(160%) blur(14px);
+        background: color-mix(in srgb, var(--bg) 82%, transparent); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; text-decoration: none; }
+  .logo img { width: 34px; height: 34px; border-radius: 9px; }
+  nav .links { display: flex; gap: 22px; font-size: 15px; }
+  nav .links a { text-decoration: none; color: var(--muted); }
+  nav .links a:hover { color: var(--ink); }
+  @media (max-width: 720px) { nav .links { display: none; } }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px;
+         font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-size: 16px; }
+  .btn-brand { background: var(--brand); color: #171717; }
+  .btn-ghost { background: var(--card); border: 1px solid var(--line); }
+  .btn small { font-weight: 600; opacity: .7; }
+
+  /* hero */
+  .hero { padding: 64px 0 40px; background:
+          radial-gradient(1100px 420px at 85% -10%, color-mix(in srgb, var(--brand) 55%, transparent), transparent 70%); }
+  .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 32px; align-items: center; }
+  .pill { display: inline-block; background: var(--soft); color: var(--brand-deep); font-weight: 700;
+          font-size: 14px; padding: 5px 14px; border-radius: 999px; }
+  h1 { font-size: clamp(36px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; margin: 14px 0 16px; }
+  .lead { font-size: 20px; color: var(--muted); max-width: 34ch; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .hero-art { position: relative; text-align: center; }
+  .hero-art img { width: min(340px, 80%); filter: drop-shadow(0 18px 30px rgba(0,0,0,.18)); }
+  .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+  .badge { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 8px 12px; font-size: 14px; font-weight: 600; }
+  @media (max-width: 820px) { .hero .wrap { grid-template-columns: 1fr; } .hero-art { order: -1; } .hero-art img { width: 200px; } }
+
+  section { padding: 56px 0; }
+  h2 { font-size: clamp(28px, 4vw, 38px); letter-spacing: -0.01em; margin: 0 0 10px; }
+  .sub { color: var(--muted); margin: 0 0 30px; max-width: 60ch; }
+
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 820px) { .g3, .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .card h3 { margin: 10px 0 6px; font-size: 20px; }
+  .card p { margin: 0; color: var(--muted); }
+  .num { width: 36px; height: 36px; border-radius: 12px; background: var(--brand); color: #171717;
+         display: grid; place-items: center; font-weight: 800; }
+  .card img.mascot { width: 92px; height: 92px; object-fit: contain; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .split { grid-template-columns: 1fr; } }
+  .who { padding: 30px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--card); }
+  .who.usta { background: var(--soft); }
+  .who ul { padding-left: 20px; margin: 14px 0 0; }
+  .who li { margin: 6px 0; }
+
+  .plans { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 820px) { .plans { grid-template-columns: 1fr; } }
+  .plan .price { font-size: 30px; font-weight: 800; margin: 6px 0 2px; }
+  .plan .price span { font-size: 15px; color: var(--muted); font-weight: 600; }
+  .plan.featured { border: 2px solid var(--brand); }
+  .plan ul { padding-left: 20px; color: var(--muted); margin: 12px 0 0; }
+
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px; margin: 10px 0; }
+  summary { cursor: pointer; font-weight: 700; }
+  details p { color: var(--muted); margin: 10px 0 0; }
+
+  .final { text-align: center; background: var(--brand); color: #171717; border-radius: 28px; padding: 44px 24px; }
+  .final img { width: 120px; }
+  .final h2 { margin-top: 8px; }
+
+  footer { padding: 36px 0 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); margin-top: 40px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+  footer a { text-decoration: none; margin-right: 16px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#"><img src="img/icon.png" alt="">SarıKula</a>
+    <div class="links">
+      <a href="#nasil">Nasıl çalışır</a>
+      <a href="#ustalar">Ustalar için</a>
+      <a href="#planlar">Planlar</a>
+      <a href="#sss">SSS</a>
+      <a href="destek.html">Destek</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="pill">Yakında App Store'da · Şimdi TestFlight'ta</span>
+      <h1>Güvenilir ustalar,<br>tek uygulamada.</h1>
+      <p class="lead">İhtiyacını anlat, ustalardan teklif al, mesajlaş ve güvenle randevu oluştur. Müşteriler için tamamen ücretsiz.</p>
+      <div class="cta">
+        <a class="btn btn-brand" href="https://testflight.apple.com/join/gxEdNuPv"> Test sürümünü indir</a>
+        <a class="btn btn-ghost" href="#nasil">Nasıl çalışır?</a>
+      </div>
+      <div class="badges">
+        <span class="badge">✓ Ücretsiz ilan</span>
+        <span class="badge">✓ Komisyon yok</span>
+        <span class="badge">✓ Numaran gizli</span>
+        <span class="badge">✓ Belgeli hizmetler</span>
+      </div>
+    </div>
+    <div class="hero-art"><img src="img/MascotHello.png" alt="SarıKula maskotu el sallıyor"></div>
+  </div>
+</header>
+
+<section id="nasil">
+  <div class="wrap">
+    <h2>Üç adımda doğru usta</h2>
+    <p class="sub">İster ilan ver gelen teklifleri karşılaştır, ister yakınındaki ustaları haritada bulup doğrudan yaz.</p>
+    <div class="grid g3">
+      <div class="card"><div class="num">1</div><h3>İhtiyacını anlat</h3><p>Birkaç soruyla işini tarif et, fotoğraf ekle. İlan vermek ücretsiz.</p></div>
+      <div class="card"><div class="num">2</div><h3>Teklifleri karşılaştır</h3><p>Bölgendeki ustalar fiyat ve tarih teklif eder. Profillerine, işlerine ve yorumlarına bak.</p></div>
+      <div class="card"><div class="num">3</div><h3>Randevunu oluştur</h3><p>Ustayla uygulama içinden mesajlaş, randevunu ayarla. Ödemeyi işten sonra doğrudan ustaya yaparsın.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Evdeki her iş için</h2>
+    <p class="sub">Temizlikten tesisata, tadilattan taşımaya; yüzlerce hizmet tek yerde.</p>
+    <div class="grid g3">
+      <div class="card"><img class="mascot" src="img/MascotCatCleaning.png" alt=""><h3>Temizlik</h3><p>Ev, ofis, taşınma ve inşaat sonrası temizlik.</p></div>
+      <div class="card"><img class="mascot" src="img/MascotCatPlumbing.png" alt=""><h3>Tesisat</h3><p>Su kaçağı, batarya, gider açma ve daha fazlası.</p></div>
+      <div class="card"><img class="mascot" src="img/MascotCatRepair.png" alt=""><h3>Tadilat ve tamir</h3><p>Anahtar teslim tadilat, mutfak, banyo, parke.</p></div>
+      <div class="card"><img class="mascot" src="img/MascotCatMoving.png" alt=""><h3>Taşıma</h3><p>Taşıma yardımı ve belgeli nakliyat firmaları.</p></div>
+      <div class="card"><div class="num">🗺️</div><h3>Yakınındaki Ustalar</h3><p>Ustaları haritada ilçe ilçe gör, profiline bak, doğrudan mesaj gönder. Adres değil, yalnızca hizmet verdikleri ilçe görünür.</p></div>
+      <div class="card"><div class="num">🛡️</div><h3>Güvenlik önce</h3><p>Numaran randevu onaylanana kadar gizli. Bildir ve engelle her ekranda. Belge gerektiren işler belge onaylanmadan yayına çıkmaz.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="ustalar">
+  <div class="wrap">
+    <div class="split">
+      <div class="who">
+        <h2>Müşteriler için</h2>
+        <ul>
+          <li>Ücretsiz ilan, sınırsız teklif</li>
+          <li>Gerçek işlerden gelen değerlendirmeler</li>
+          <li>Uygulama içi mesajlaşma, numaran gizli</li>
+          <li>Ödemeyi işten sonra doğrudan ustaya yaparsın</li>
+        </ul>
+      </div>
+      <div class="who usta">
+        <h2>Ustalar için</h2>
+        <ul>
+          <li>Başvurun anında yayında, belgelerin isteğe bağlı*</li>
+          <li>Bölgendeki işleri gör, ücretsiz teklif ver</li>
+          <li><strong>Komisyon yok:</strong> kazandığın senin</li>
+          <li>Takvim, teklif şablonları, kazanç takibi</li>
+        </ul>
+        <p class="muted" style="color:var(--muted);font-size:14px;margin-top:12px">* Yasal belge gerektiren hizmetler (ör. araçla nakliyat, catering) belge onaylandıktan sonra görünür.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="planlar">
+  <div class="wrap">
+    <h2>Ustalar için planlar</h2>
+    <p class="sub">Ücretsiz plan iş almak için yeterli. Pro planlar işini büyütmen için ek araçlar sunar; sıralamayı satın almazsın.</p>
+    <div class="grid plans">
+      <div class="card plan"><h3>Ücretsiz</h3><div class="price">₺0</div>
+        <ul><li>Profil ve hizmetler</li><li>İş fırsatları ve teklif</li><li>Mesajlaşma</li><li>Temel kazanç özeti</li></ul></div>
+      <div class="card plan"><h3>Pro</h3><div class="price">₺999<span>/ay</span></div>
+        <ul><li>Gelişmiş kazanç analizi</li><li>Müşteri notları ve etiketler</li><li>Teklif şablonları</li><li>Gelişmiş takvim</li></ul></div>
+      <div class="card plan featured"><h3>Pro Plus</h3><div class="price">₺1.999<span>/ay</span></div>
+        <ul><li>Pro'daki her şey</li><li>Müşteriler seni doğrudan arayabilir</li><li>Numaranı kaç müşterinin gördüğünü izle</li></ul></div>
+    </div>
+    <p class="sub" style="font-size:14px;margin-top:14px">Abonelikler Apple üzerinden faturalanır, aylık otomatik yenilenir ve App Store'daki Abonelikler bölümünden istediğin zaman iptal edilebilir.</p>
+  </div>
+</section>
+
+<section id="sss">
+  <div class="wrap">
+    <h2>Sık sorulanlar</h2>
+    <details><summary>SarıKula ücretli mi?</summary><p>Müşteriler için tamamen ücretsiz. Ustalar da ücretsiz kullanabilir; isteğe bağlı Pro ve Pro Plus planları vardır.</p></details>
+    <details><summary>Ödemeyi nasıl yaparım?</summary><p>SarıKula ödemelere aracılık etmez ve komisyon almaz. Hizmet bedelini işten sonra doğrudan ustaya ödersin.</p></details>
+    <details><summary>Hangi şehirlerdeyiz?</summary><p>Hizmet bölgelerini adım adım açıyoruz; ilk açılan bölge İstanbul. Bölgen henüz açık değilse uygulamada bekleme listesine katılabilirsin.</p></details>
+    <details><summary>Verilerim güvende mi?</summary><p>Adresin ve numaran izinsiz paylaşılmaz; haritada yalnızca ilçe merkezi gösterilir. Ayrıntılar için <a href="gizlilik.html">Gizlilik Politikası</a>'na bak.</p></details>
+    <details><summary>Destek nasıl alırım?</summary><p><a href="destek.html">Destek sayfamıza</a> göz at ya da <a href="mailto:kndgr65@gmail.com">kndgr65@gmail.com</a> adresine yaz.</p></details>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="final">
+      <img src="img/MascotCelebration.png" alt="">
+      <h2>Ustanı bulmaya hazır mısın?</h2>
+      <p style="margin:0 0 20px">Test sürümüne katıl, ilk deneyenlerden ol.</p>
+      <a class="btn" style="background:#171717;color:#fff" href="https://testflight.apple.com/join/gxEdNuPv"> TestFlight'ta dene</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 SarıKula</div>
+    <div><a href="destek.html">Destek</a><a href="gizlilik.html">Gizlilik</a><a href="kosullar.html">Kullanım Koşulları</a><a href="mailto:kndgr65@gmail.com">İletişim</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
