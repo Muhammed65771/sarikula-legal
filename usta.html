@@ -58,7 +58,7 @@ function notFound(text) { content.replaceChildren(); const c = el("div", "card")
     card.append(chips);
     const stats = el("div", "stats");
     const stat = (value, label) => { const s = el("div"); s.append(el("b", null, value), el("span", "muted", label)); stats.append(s); };
-    stat(p.review_count ? Number(p.rating).toFixed(1) : "Yeni", p.review_count ? p.review_count + " değerlendirme" : "henüz değerlendirme yok");
+    stat(p.review_count ? Number(p.rating).toFixed(1) : "Yeni", p.review_count ? p.review_count + " yorum" : "yorum yok");
     stat(String(p.completed_jobs || 0), "tamamlanan iş"); stat(String((p.offerings || []).length), "hizmet");
     card.append(stats); content.append(card);
     if ((p.offerings || []).length) {
