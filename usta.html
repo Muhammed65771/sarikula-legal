@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SarıKula · Usta profili</title>
+<meta name="description" content="SarıKula'da bir usta profili. Teklif almak ve mesajlaşmak için uygulamayı aç.">
+<link rel="icon" href="img/icon.png"><link rel="apple-touch-icon" href="img/icon.png">
+<style>:root{--ink:#171717;--muted:#5e5e5e;--brand:#ffdf32;--brand-deep:#8a6a00;--bg:#fbfaf6;--card:#fff;--line:#ece9df;--soft:#fff7cc}
+@media (prefers-color-scheme: dark){:root{--ink:#f5f5f2;--muted:#b3b2ac;--bg:#0f0f0e;--card:#1b1b19;--line:#2b2a27;--soft:#2a2610;--brand-deep:#ffdf32}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:680px;margin:0 auto;padding:20px 16px 64px}a{color:inherit}
+.top{display:flex;align-items:center;gap:10px;font-weight:700;text-decoration:none;margin-bottom:20px}.top img{width:32px;height:32px;border-radius:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;margin-top:14px}
+.head{display:flex;gap:16px;align-items:center}.avatar{width:72px;height:72px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:26px;font-weight:700;color:var(--brand-deep);flex:none}
+h1{margin:0;font-size:24px;line-height:1.2}.muted{color:var(--muted);font-size:14px}.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{background:var(--soft);border-radius:999px;padding:3px 10px;font-size:13px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;text-align:center}
+.stats b{display:block;font-size:20px}.list{margin:6px 0 0;padding:0;list-style:none}.list li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.btn{display:block;text-align:center;background:var(--brand);color:#171717;font-weight:700;text-decoration:none;border-radius:14px;padding:14px;margin-top:18px}
+.note{font-size:13px;color:var(--muted);margin-top:10px}h2{font-size:17px;margin:0 0 4px}</style></head>
+<body><main>
+<a class="top" href="index.html"><img src="img/icon.png" alt="">SarıKula</a>
+<div id="content"><div class="card"><p class="muted">Profil yükleniyor…</p></div></div>
+<a class="btn" href="https://testflight.apple.com/join/gxEdNuPv">SarıKula uygulamasında aç</a>
+<p class="note">Teklif almak, mesajlaşmak ve randevu oluşturmak uygulamada yapılır. Haritada ustanın yalnızca ilçesi gösterilir; adres ve telefon bilgisi paylaşılmaz.</p>
+<p class="muted"><a href="index.html">Ana sayfa</a> · <a href="destek.html">Destek</a> · <a href="gizlilik.html">Gizlilik</a> · <a href="kosullar.html">Kullanım Koşulları</a></p>
+</main>
+<script>
+// Public, read-only profile data. The publishable key only reaches what Row Level Security exposes to everyone.
+const API = "https://etlxibyzvhpmgqftzeft.supabase.co/rest/v1/";
+const KEY = "sb_publishable_tTEggpBXGM4gbg-tN8iL9g_dHuzpBMy";
+const content = document.getElementById("content");
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+const get = async (path) => { const r = await fetch(API + path, { headers: { apikey: KEY } }); if (!r.ok) throw new Error(r.status); return r.json(); };
+const lira = (k) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(k / 100);
+function notFound(text) { content.replaceChildren(); const c = el("div", "card"); c.append(el("h1", null, "Profil bulunamadı"), el("p", "muted", text)); content.append(c); }
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const id = params.get("id") || "", slug = params.get("s") || "";
+  const filter = /^[0-9a-f-]{36}$/i.test(id) ? "id=eq." + id : /^[a-z0-9-]{3,120}$/.test(slug) ? "slug=eq." + slug : null;
+  if (!filter) return notFound("Bağlantı eksik veya hatalı.");
+  try {
+    const [rows, districts, services] = await Promise.all([
+      get("professionals?select=display_name,business_name,headline,bio,district_id,service_area_ids,offerings,rating,review_count,completed_jobs,experience_years,has_certificate&limit=1&" + filter),
+      get("districts?select=id,name&is_launched=eq.true"), get("services?select=id,name")]);
+    const p = rows[0];
+    if (!p) return notFound("Bu usta artık SarıKula'da görünmüyor.");
+    const dn = Object.fromEntries(districts.map((d) => [d.id, d.name])), sn = Object.fromEntries(services.map((s) => [s.id, s.name]));
+    document.title = p.display_name + " · SarıKula";
+    content.replaceChildren();
+    const card = el("div", "card"), head = el("div", "head");
+    const initials = p.display_name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toLocaleUpperCase("tr-TR");
+    const info = el("div"); info.append(el("h1", null, p.display_name));
+    if (p.business_name) info.append(el("div", "muted", p.business_name));
+    info.append(el("div", "muted", (dn[p.district_id] || "") + (p.experience_years ? " · " + p.experience_years + " yıl deneyim" : "")));
+    head.append(el("div", "avatar", initials), info); card.append(head);
+    if (p.headline) card.append(el("p", null, p.headline));
+    const chips = el("div", "chips");
+    if (p.has_certificate) chips.append(el("span", "chip", "Belgeli usta"));
+    (p.service_area_ids || []).slice(0, 8).forEach((d) => dn[d] && chips.append(el("span", "chip", dn[d])));
+    card.append(chips);
+    const stats = el("div", "stats");
+    const stat = (value, label) => { const s = el("div"); s.append(el("b", null, value), el("span", "muted", label)); stats.append(s); };
+    stat(p.review_count ? Number(p.rating).toFixed(1) : "Yeni", p.review_count ? p.review_count + " değerlendirme" : "henüz değerlendirme yok");
+    stat(String(p.completed_jobs || 0), "tamamlanan iş"); stat(String((p.offerings || []).length), "hizmet");
+    card.append(stats); content.append(card);
+    if ((p.offerings || []).length) {
+      const c = el("div", "card"); c.append(el("h2", null, "Hizmetler ve başlangıç fiyatları"));
+      const ul = el("ul", "list");
+      p.offerings.forEach((o) => { const li = el("li"); li.append(el("span", null, sn[o.service_id] || o.service_id), el("b", null, lira(o.price_kurus) + "'den")); ul.append(li); });
+      c.append(ul); content.append(c);
+    }
+    if (p.bio) { const c = el("div", "card"); c.append(el("h2", null, "Hakkında"), el("p", null, p.bio)); content.append(c); }
+  } catch (e) { notFound("Profil şu anda yüklenemedi. Lütfen biraz sonra tekrar dene."); }
+})();
+</script>
+</body></html>
